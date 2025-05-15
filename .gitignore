@@ -172,3 +172,8 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+/.idea/.gitignore
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/ringo.iml
+/.idea/vcs.xml
