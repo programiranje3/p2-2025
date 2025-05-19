@@ -38,6 +38,16 @@ def pass_simple_function_as_parameter():
 
     # Case 1: 0 or more arguments
 
+    # def f(*songs):
+    #     return f'{', '.join([s for s in songs]) if songs else ''}'
+    #     # return f'{', '.join(songs) if songs else ''}'
+    #
+    # def g(h, *args):
+    #     return h(*args)
+    #
+    # songs = ['Act Naturally', 'With a Little Help from My Friends']
+    # print(g(f, *songs))
+
     # Try also this in Python Console:
     #     def f(*args):
     #         return sum(args)      # it must be sum(args), not sum(*args); e.g. in Python Console sum((1, 2)) is OK
@@ -47,6 +57,18 @@ def pass_simple_function_as_parameter():
     #     g(f, *[1, 2, 3])          # result: 6
 
     # Case 2: 1 or more arguments (the first one is positional)
+
+    def f(band, *songs):
+        return f'{band}, songs: {', '.join(songs) if songs else ''}'
+
+    def g(h, a1, *args):
+        return f'{h(a1, *args)}'
+
+    songs = ['Act Naturally', 'With a Little Help from My Friends']
+    print(g(f, 'The Beatles', *songs))
+    # print(g(f, 'The Beatles', ))
+    # print(g(f, *songs, ))
+    # # print(g(f, ))
 
 
 #%%
@@ -88,6 +110,8 @@ def pass_function_as_parameter(f, *args, **kwargs):
     See https://stackoverflow.com/a/34206138/1899061 for further details.
     """
 
+    f(*args, **kwargs)
+
 
 #%%
 # Test pass_function_as_parameter(f, *args, **kwargs)
@@ -103,11 +127,19 @@ def return_function(full_name, first_name_flag):
     - a function that returns a person's family name
     """
 
+    def first():
+        return full_name.split()[0]
+
+    def last():
+        return full_name.split()[1]
+
+    return first if first_name_flag else last
+
 
 #%%
 # Test return_function(full_name, first_name_flag)
-# f = return_function('Ringo Starr', False)
-# print(f())
+f = return_function('Ringo Starr', 0)
+print(f())
 
 
 #%%
@@ -119,12 +151,20 @@ def return_function_with_args(*args):
     - a function that returns a tuple of args (or a list of args, or...)
     """
 
+    def empty(*p):
+        return ()
+
+    def non_empty(*p):
+        return p
+
+    return non_empty if args else empty
+
 
 #%%
 # Test return_function_with_args(*args)
-# f = return_function_with_args()
+f = return_function_with_args()
 # f = return_function_with_args(1)
-# print(f('Ringo', 'Starr', 1940))
+print(f('Ringo', 'Starr', 1940))
 
 
 #%%
@@ -175,6 +215,14 @@ def a_very_simple_decorator(f):
     # Ringo Starr
     # Ringo Starr
 
+    def wrap(*args):
+        print('-------')
+        v = f(*args)
+        print('-------')
+        return v
+
+    return wrap
+
 
 #%%
 # Test a_very_simple_decorator(f)
@@ -186,14 +234,14 @@ def songs(*args):
 songs('Act Naturally', 'With a Little Help from My Friends')
 
 #%%
-# f = a_very_simple_decorator(songs)
-# f('Act Naturally', 'With a Little Help from My Friends')
+f = a_very_simple_decorator(songs)
+f('Act Naturally', 'With a Little Help from My Friends')
 
 #%%
-# songs = a_very_simple_decorator(songs)
-# songs('Act Naturally', 'With a Little Help from My Friends')
-# print()
-# songs()
+songs = a_very_simple_decorator(songs)
+songs('Act Naturally', 'With a Little Help from My Friends')
+print()
+songs()
 
 
 #%%
@@ -211,6 +259,19 @@ def band_details(f_to_decorate):
         return wrapper_decorator
     """
 
+    @functools.wraps(f_to_decorate)
+    def wrap(*args, **kwargs):
+        print('-------')
+        v = f_to_decorate(*args, **kwargs)
+        if kwargs:
+            print(f'{', '.join([str(k) + ': ' + str(v) for k, v in kwargs.items()])}')
+        if len(args) > 1:
+            print(f'{', '.join([a for a in args[1:]])}')
+        print('-------')
+        return v
+
+    return wrap
+
 
 #%%
 @band_details
@@ -220,11 +281,13 @@ def print_band(name, *members, **years_active):
     omit it if decorating manually.
     """
 
+    print(name)
+
 
 #%%
 # Test members(f_to_decorate)
-print_band('The Beatles', *the_beatles, )
-print_band('The Beatles', start=1962, end=1970)
+# print_band('The Beatles', *the_beatles, )
+# print_band('The Beatles', start=1962, end=1970)
 print_band('The Beatles', *the_beatles, start=1962, end=1970)
 
 #%%
