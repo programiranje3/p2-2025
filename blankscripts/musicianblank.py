@@ -308,6 +308,17 @@ class SingerSongwriter(Singer, Songwriter):
 
 # print(SingerSongwriter.__mro__)
 # print()
+
+#       A
+#      / \
+#     /   \
+#    /     \
+#   B       C
+#    \     /
+#     \   /
+#      \ /
+#       D
+
 # bob = SingerSongwriter(name='Bob Dylan', vocals=Vocals.LEAD_VOCALS,
 #                        instrument=Instrument.RHYTHM_GUITAR, is_band_member=False)
 # print(bob)
