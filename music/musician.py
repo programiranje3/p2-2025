@@ -427,7 +427,20 @@ bob.tell()
 # Single object
 from json_tricks import loads, dumps
 
+ringo = Singer(name='Ringo Starr', vocals=Vocals.BACKGROUND_VOCALS)
+# print(ringo)
+ringo_json = dumps(ringo, indent=2)
+print(ringo_json)
+print(loads(ringo_json))
+
 #%%
 # List of objects
 from json_tricks import loads, dumps
-
+ringo = Singer(name='Ringo Starr', vocals=Vocals.BACKGROUND_VOCALS)
+john = Songwriter(name='John Lennon', instrument=Instrument.RHYTHM_GUITAR)
+musicians = [ringo, john]
+musicians_json = dumps(musicians, indent=2)
+print(musicians_json)
+# print(loads(musicians_json))
+for m in loads(musicians_json):
+    print(m)

@@ -41,6 +41,9 @@ class Band:
 
         # Code to check if the band name is specified correctly (possibly raises BandNameError)
 
+        if not isinstance(self.name, str) or len(self.name) < 2:
+            raise BandNameError(self.name)
+
         # self.__i = 0                                  # introduce and initialize iterator counter, self.__i
 
     # def __str__(self):
@@ -203,7 +206,9 @@ class BandNameError(BandError):
         """ It is usually sufficient just to call Exception.__init__() and pass self and an f-string that
         includes the other argument(s) and prints the error message;
         it can be followed by self.<other> = <other> statement(s) for completeness."""
-        pass
+
+        self.name = name
+        Exception.__init__(self, f'Invalid band name: {name}')
 
 
 #%%
@@ -215,41 +220,123 @@ class BandNameError(BandError):
 # (relevant for exception handling).
 # To write error messages to the exception console, use sys.stderr.write(f'...').
 
+the_beatles = Band('The Beatles', *[johnLennon, paulMcCartney, georgeHarrison, ringoStarr],)
+try:
+    for i in range(5):
+        print(the_beatles.members[i])
+except Exception as e:
+    # sys.stderr.write(f'Error: {e.args[0]}\n')
+    # print(f'{e.__class__.__name__}: {e.args[0]}')
+    sys.stderr.write(f'\n\n{e.__class__.__name__}: {e.args[0]}')
+    # print(f'{e.__class__.__name__}: {e.args}')
+
 #%%
 # Catching multiple exceptions and the 'finally' clause
+the_beatles = Band('The Beatles', *[johnLennon, paulMcCartney, georgeHarrison, ringoStarr],)
+try:
+    for i in range(4):
+        print(the_beatles.members[i])
+    print(1/0)
+except IndexError as e:
+    sys.stderr.write(f'\n\n{e.__class__.__name__}: {e.args[0]}')
+except ZeroDivisionError as e:
+    sys.stderr.write(f'\n\n{e.__class__.__name__}: {e.args[0]}')
+finally:
+    print('\nThe "finally" clause is executed whether an exception was raised or not.')
 
 #%%
 # Using the 'else' clause (must be after all 'except' clauses)
+the_beatles = Band('The Beatles', *[johnLennon, paulMcCartney, georgeHarrison, ringoStarr],)
+try:
+    for i in range(4):
+        print(the_beatles.members[i])
+    # print(1/0)
+except IndexError as e:
+    sys.stderr.write(f'\n\n{e.__class__.__name__}: {e.args[0]}')
+except ZeroDivisionError as e:
+    sys.stderr.write(f'\n\n{e.__class__.__name__}: {e.args[0]}')
+else:
+    print('\nThe "else" clause is executed if no exception was raised.')
+finally:
+    print('\nThe "finally" clause is executed whether an exception was raised or not.')
 
 #%%
 # Catching 'any' exception - empty 'except' clause
+the_beatles = Band('The Beatles', *[johnLennon, paulMcCartney, georgeHarrison, ringoStarr],)
+try:
+    for i in range(4):
+        print(the_beatles.members[i])
+    print(1/0)
+except:
+    sys.stderr.write(f'\n\nCaught an exception')
+else:
+    print('\nThe "else" clause is executed if no exception was raised.')
+finally:
+    print('\nThe "finally" clause is executed whether an exception was raised or not.')
 
 #%%
 # Catching user-defined exceptions
+try:
+    the_beatles = Band('B', *[johnLennon, paulMcCartney, georgeHarrison, ringoStarr],)
+except BandNameError as e:
+    sys.stderr.write(f'\n\n{e.__class__.__name__}: {e.args[0]}')
+else:
+    print('\nThe "else" clause is executed if no exception was raised.')
+finally:
+    print('\nThe "finally" clause is executed whether an exception was raised or not.')
 
 #%%
 # Demonstrate working with files
 
-# theBeatles = Band('The Beatles', *[johnLennon, paulMcCartney, georgeHarrison, ringoStarr],
-#                   start=date(1957, 7, 6), end=date(1970, 4, 10))
-# theRollingStones = Band('The Rolling Stones', *[mickJagger, keithRichards, ronWood, charlieWatts],
-#                         start=date(1962, 7, 12))
-# greenDay = Band('Green Day', *[billyJoeArmstrong, mikeDirnt, treCool])
+theBeatles = Band('The Beatles', *[johnLennon, paulMcCartney, georgeHarrison, ringoStarr],
+                  start=date(1957, 7, 6), end=date(1970, 4, 10))
+theRollingStones = Band('The Rolling Stones', *[mickJagger, keithRichards, ronWood, charlieWatts],
+                        start=date(1962, 7, 12))
+greenDay = Band('Green Day', *[billyJoeArmstrong, mikeDirnt, treCool])
 
-# bands = [theBeatles, theRollingStones, greenDay]
+bands = [theBeatles, theRollingStones, greenDay]
 
 
 #%%
 # Writing to a text file - <outfile>.write(str(<obj>), <outfile>.writelines([str(<obj>)+'\n' for <obj> in <objs>])
+filename = get_data_dir() / 'bands.txt'
+with open(filename, 'w') as outfile:
+    # for b in bands:
+    #     outfile.write(str(b) + '\n')
+    outfile.writelines([str(b) + '\n' for b in bands])
+print('Done')
 
 #%%
 # Demonstrate reading from a text file - <infile>.readline(), <infile>.readlines(), <infile>.read()
+filename = get_data_dir() / 'bands.txt'
+with open(filename, 'r') as infile:
+    # lines = infile.read()
+    lines = infile.readlines()
+    # lines = ''
+    # while 45:
+    #     line = infile.readline()
+    #     if line:
+    #         lines += line
+    #     else:
+    #         break
+print(lines)
 
 #%%
 # Demonstrate writing to a binary file - pickle.dump(<obj>, <outfile>)
+filename = get_data_dir() / 'bands.bin'
+with open(filename, 'wb') as outfile:
+    pickle.dump(bands, outfile)
+print('Done')
+
 
 #%%
 # Demonstrate reading from a binary file - pickle.load(<infile>)
+filename = get_data_dir() / 'bands.bin'
+with open(filename, 'rb') as infile:
+    bands_1 = pickle.load(infile)
+# print(bands_1)
+for b in bands_1:
+    print(b)
 
 #%%
 # Demonstrate JSON encoding/decoding of Band objects
@@ -271,16 +358,28 @@ class BandNameError(BandError):
 
 # Single object
 from json_tricks import loads, dumps
+theBeatles = Band('The Beatles', *[johnLennon, paulMcCartney, georgeHarrison, ringoStarr],
+                  start=date(1957, 7, 6), end=date(1970, 4, 10))
+the_beatles_json = dumps(theBeatles, indent=2)
+print(the_beatles_json)
+the_beatles_1 = loads(the_beatles_json)
+print(the_beatles_1)
+
 
 # List of objects
 
-# theBeatles = Band('The Beatles', *[johnLennon, paulMcCartney, georgeHarrison, ringoStarr],
-#                   start=date(1957, 7, 6), end=date(1970, 4, 10))
-# theRollingStones = Band('The Rolling Stones', *[mickJagger, keithRichards, ronWood, charlieWatts],
-#                         start=date(1962, 7, 12))
-# greenDay = Band('Green Day', *[billyJoeArmstrong, mikeDirnt, treCool])
+theBeatles = Band('The Beatles', *[johnLennon, paulMcCartney, georgeHarrison, ringoStarr],
+                  start=date(1957, 7, 6), end=date(1970, 4, 10))
+theRollingStones = Band('The Rolling Stones', *[mickJagger, keithRichards, ronWood, charlieWatts],
+                        start=date(1962, 7, 12))
+greenDay = Band('Green Day', *[billyJoeArmstrong, mikeDirnt, treCool])
 
-# bands = [theBeatles, theRollingStones, greenDay]
+bands = [theBeatles, theRollingStones, greenDay]
 
-
+bands_json = dumps(bands, indent=2)
+print(bands_json)
+bands_1 = loads(bands_json)
+# print(bands_1)
+for b in bands_1:
+    print(b)
 

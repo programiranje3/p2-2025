@@ -32,6 +32,14 @@ print(format_date(date(2025, 1, 1)))
 # - absolute path: <path>.absolute(), e.g. Path().absolute(), or Path('.').absolute()
 # - parent dir: <path>.parent
 
+print(Path.home())
+print(Path.cwd())
+# print(Path())
+print(Path.cwd().absolute())
+print(Path().absolute())
+print(Path('.').absolute())
+print(Path('.').absolute().parent)
+
 #%%
 # Demonstrate creating and removing directories
 # - new dir: <newDir> = <path> / '<subdir1>/<subdir2>/.../<subdirN>'
@@ -39,15 +47,27 @@ print(format_date(date(2025, 1, 1)))
 # - remove dir: <dir>.rmdir()                                           # requires the <dir> to be empty
 # - project dir: settings.PROJECT_DIR
 
+new_dir = PROJECT_DIR / 'new_dir'
+print(new_dir)
+new_dir.mkdir(parents=True, exist_ok=True)
+print(new_dir.exists())
+print()
+
+new_dir.rmdir()
+print(new_dir.exists())
+print()
+
 
 #%%
 def get_project_dir():
     """Returns the Path object corresponding to the project root directory.
     """
 
+    return PROJECT_DIR
+
 #%%
 # Demonstrate get_project_dir()
-
+print(get_project_dir())
 
 #%%
 def get_data_dir():
@@ -55,6 +75,10 @@ def get_data_dir():
     (by convention located right under the project root directory).
     """
 
+    data_dir = PROJECT_DIR / 'data'
+    data_dir.mkdir(parents=True, exist_ok=True)
+    return data_dir
+
 #%%
 # Demonstrate get_data_dir()
-
+print(get_data_dir())
